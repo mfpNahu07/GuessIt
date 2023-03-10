@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment.findNavController
@@ -62,19 +63,25 @@ class GameFragment : Fragment() {
             //Process the data in the viewModel
             viewModel.onCorrect()
 
-            //Binding
-            updateScoreText()
-            updateWordText()
         }
 
         binding.skipButton.setOnClickListener {
             viewModel.onSkip()
-            updateScoreText()
-            updateWordText()
+
         }
 
-        updateScoreText()
-        updateWordText()
+        //Set up the observation relationship for the score LiveDatas:
+        //viewModel.score.observe(this, Observer { newScore -> //Get the LiveData from your view model and call the observe method.
+        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
+            binding.scoreText.text = newScore.toString()
+        })
+
+        viewModel.word.observe(viewLifecycleOwner, Observer { nextWord ->
+            binding.wordText.text = nextWord.toString()
+        })
+
+
+
         return binding.root
 
     }
@@ -87,20 +94,11 @@ class GameFragment : Fragment() {
      * found by passing in a viewer fragment, which are things that we do not want in the viewModel.
      * Any navigation is going to need to be done in the fragment.
      */
+
     private fun gameFinished() {
-        val action = GameFragmentDirections.actionGameToScore(viewModel.score)
+        val action = GameFragmentDirections.actionGameToScore(viewModel.score.value ?: 0)
         findNavController(this).navigate(action)
     }
 
 
-    /** Methods for updating the UI **/
-
-    private fun updateWordText() {
-        binding.wordText.text = viewModel.word
-
-    }
-
-    private fun updateScoreText() {
-        binding.scoreText.text = viewModel.score.toString()
-    }
 }
