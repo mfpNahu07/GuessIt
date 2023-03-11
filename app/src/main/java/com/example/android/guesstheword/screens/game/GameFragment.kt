@@ -81,6 +81,14 @@ class GameFragment : Fragment() {
             binding.wordText.text = nextWord.toString()
         })
 
+        viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { hasFinished ->
+            if (hasFinished) {
+                gameFinished()
+                viewModel.onGameFinishComplete() //It tells the view model that the game finished EVENT was triggered, and should not be triggered again when rotating the phone.
+                                                 //Because by rotating the phone, the Fragment will be reconnected to the ViewModel, and the current STATE of the boolean will be true.
+            }
+        })
+
 
 
         return binding.root
