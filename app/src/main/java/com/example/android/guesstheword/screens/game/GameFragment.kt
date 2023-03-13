@@ -17,6 +17,7 @@
 package com.example.android.guesstheword.screens.game
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -85,8 +86,13 @@ class GameFragment : Fragment() {
             if (hasFinished) {
                 gameFinished()
                 viewModel.onGameFinishComplete() //It tells the view model that the game finished EVENT was triggered, and should not be triggered again when rotating the phone.
-                                                 //Because by rotating the phone, the Fragment will be reconnected to the ViewModel, and the current STATE of the boolean will be true.
+                //Because by rotating the phone, the Fragment will be reconnected to the ViewModel, and the current STATE of the boolean will be true.
             }
+        })
+
+        viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
+            // binding.timerText.text = newTime.toString()
+            binding.timerText.text = DateUtils.formatElapsedTime(newTime)
         })
 
 

@@ -6,7 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-abstract class GameViewModel : ViewModel() {
+
+class GameViewModel : ViewModel() {
 
     companion object {
         // These represent different important times
@@ -19,6 +20,7 @@ abstract class GameViewModel : ViewModel() {
 
         // This is the total time of the game
         const val COUNTDOWN_TIME = 60000L
+
     }
 
     private val timer: CountDownTimer
@@ -50,7 +52,7 @@ abstract class GameViewModel : ViewModel() {
 
     init {
         Log.i("GameViewModel", "GameViewModel created!!!")
-        _eventGameFinish.value = false
+        //_eventGameFinish.value = false
         resetList()
         nextWord()
         _score.value = 0 // Initialize score.value to 0.
@@ -60,10 +62,17 @@ abstract class GameViewModel : ViewModel() {
 
             override fun onTick(millisUntilFinished: Long) {
                 // TODO implement what should happen each tick of the timer
+
+                //show the current number of second is going down
+                _currentTime.value = (millisUntilFinished / ONE_SECOND)
             }
 
             override fun onFinish() {
                 // TODO implement what should happen when the timer finishes
+
+                //the game finish event to be triggered
+                _currentTime.value = DONE
+                _eventGameFinish.value = true
             }
         }
 
@@ -73,6 +82,7 @@ abstract class GameViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        timer.cancel() //avoid memory leaks, always cancel a CountDownTimer if you no longer need it
         Log.i("GameViewModel", "GameViewModel destroyed!!!")
     }
 
