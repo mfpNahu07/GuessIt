@@ -58,19 +58,25 @@ class GameFragment : Fragment() {
         //Reference to get viewModel, this is what reestablishes the connection to the same ViewModel
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
+        //Let binding know about the ViewModel, get rid of some code of GameFragment
+        binding.gameViewModel = viewModel
 
-
+        /**
+         * onClickListeners have been set up in the .xml
+         *This way, we are removing the Fragment as an intermediary, an instead the views
+         *communicate directly with the ViewModel
+         *
         binding.correctButton.setOnClickListener {
 
-            //Process the data in the viewModel
-            viewModel.onCorrect()
+        //Process the data in the viewModel
+        viewModel.onCorrect()
 
         }
 
         binding.skipButton.setOnClickListener {
-            viewModel.onSkip()
+        viewModel.onSkip()
 
-        }
+        }*/
 
         //Set up the observation relationship for the score LiveDatas:
         //viewModel.score.observe(this, Observer { newScore -> //Get the LiveData from your view model and call the observe method.
