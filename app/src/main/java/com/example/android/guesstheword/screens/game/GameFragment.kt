@@ -94,7 +94,7 @@ class GameFragment : Fragment() {
          * object changes. So, there's no need to observe from the Fragment anymore
          *
          * viewModel.word.observe(viewLifecycleOwner, Observer { nextWord ->
-              binding.wordText.text = nextWord.toString()
+        binding.wordText.text = nextWord.toString()
         })
          * */
 
@@ -107,10 +107,11 @@ class GameFragment : Fragment() {
             }
         })
 
+        /*
         viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
             // binding.timerText.text = newTime.toString()
-            binding.timerText.text = DateUtils.formatElapsedTime(newTime)
-        })
+            binding.timerText.text = DateUtils.formatElapsedTime(newTime) // Formatting belongs to the ViewModel.
+        })*/
 
 
 
