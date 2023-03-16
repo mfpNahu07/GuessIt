@@ -61,6 +61,10 @@ class GameFragment : Fragment() {
         //Let binding know about the ViewModel, get rid of some code of GameFragment
         binding.gameViewModel = viewModel
 
+        //Allow to use LiveData to automatically update data binding layouts
+        //binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
+
         /**
          * onClickListeners have been set up in the .xml
          *This way, we are removing the Fragment as an intermediary, an instead the views
@@ -80,13 +84,20 @@ class GameFragment : Fragment() {
 
         //Set up the observation relationship for the score LiveDatas:
         //viewModel.score.observe(this, Observer { newScore -> //Get the LiveData from your view model and call the observe method.
-        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
-            binding.scoreText.text = newScore.toString()
-        })
+        //viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
+        //    binding.scoreText.text = newScore.toString()
+        //})
 
-        viewModel.word.observe(viewLifecycleOwner, Observer { nextWord ->
-            binding.wordText.text = nextWord.toString()
+
+        /**
+         * Using LiveData binding is the GameFragment.xml that updates automatically when the LiveData
+         * object changes. So, there's no need to observe from the Fragment anymore
+         *
+         * viewModel.word.observe(viewLifecycleOwner, Observer { nextWord ->
+              binding.wordText.text = nextWord.toString()
         })
+         * */
+
 
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { hasFinished ->
             if (hasFinished) {

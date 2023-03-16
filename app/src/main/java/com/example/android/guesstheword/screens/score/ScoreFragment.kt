@@ -61,11 +61,15 @@ class ScoreFragment : Fragment() {
 
         binding.scoreViewModel = viewModel
 
+        binding.lifecycleOwner =
+            this // It makes the data binding lifecycle aware. To use LiveData objects directly to .xml
+
         //binding.playAgainButton.setOnClickListener { viewModel.onPlayAgain() }
 
-        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
-            binding.scoreText.text = newScore.toString()
-        })
+
+        //viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
+        //binding.scoreText.text = newScore.toString()
+        //})
 
         viewModel.eventPlayAgain.observe(viewLifecycleOwner, Observer { playAgain ->
             if (playAgain) {
