@@ -16,7 +16,11 @@
 
 package com.example.android.guesstheword.screens.game
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -59,6 +63,7 @@ class GameFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
         //Let binding know about the ViewModel, get rid of some code of GameFragment
+        //This allows the bound layout access to all of the data in the VieWModel
         binding.gameViewModel = viewModel
 
         //Allow to use LiveData to automatically update data binding layouts
@@ -107,11 +112,23 @@ class GameFragment : Fragment() {
             }
         })
 
+        viewModel.eventBuzz.observe(viewLifecycleOwner, Observer {
+
+        })
+
         /*
         viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
             // binding.timerText.text = newTime.toString()
             binding.timerText.text = DateUtils.formatElapsedTime(newTime) // Formatting belongs to the ViewModel.
         })*/
+
+        // Buzzes when triggered with different buzz events
+        viewModel.eventBuzz.observe(viewLifecycleOwner, Observer { buzzType ->
+            if (buzzType != GameViewModel.BuzzType.NO_BUZZ) {
+                buzz(buzzType.pattern)
+                viewModel.onBuzzComplete()
+            }
+        })
 
 
 
@@ -131,6 +148,23 @@ class GameFragment : Fragment() {
     private fun gameFinished() {
         val action = GameFragmentDirections.actionGameToScore(viewModel.score.value ?: 0)
         findNavController(this).navigate(action)
+    }
+
+    /**
+     * Given a pattern, this method makes sure the device buzzes
+     */
+    private fun buzz(pattern: LongArray) {
+        //val buzzer = activity?.getSystemService<Vibrator>()
+        val buzzer = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        buzzer.let {
+            // Vibrate for 500 milliseconds
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                buzzer.vibrate(VibrationEffect.createWaveform(pattern, -1))
+            } else {
+                //deprecated in API 26
+                buzzer.vibrate(pattern, -1)
+            }
+        }
     }
 
 
